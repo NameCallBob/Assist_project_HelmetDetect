@@ -13,7 +13,7 @@ model = YOLO('helmet.pt')
 names = model.names
 
 # 設置結果文件夾的相對路徑
-app.config['RESULTS_FOLDER'] = os.path.join('..', 'storage', 'app', 'results')
+app.config['RESULTS_FOLDER'] = os.path.join('..','..', 'storage', 'app', 'results')
 
 # 將檔案轉換為二進位資料的函數
 def convert_to_binary_data(file):
@@ -82,14 +82,14 @@ def upload_image_api():
             # 使用 Flask 應用配置來設置結果文件路徑
             result_file_path = os.path.join(current_app.config['RESULTS_FOLDER'], file.filename)
             cv2.imwrite(result_file_path, processed_frame)
-        
+
         os.remove(file_path)
 
         detection_result = True if no_helmet_detected else False
         return jsonify(message='辨識成功。', detection=detection_result), 200
     else:
         return jsonify(message='圖片上傳失敗'), 400
-    
+
 
 if __name__ == "__main__":
     if not os.path.exists('uploads'):

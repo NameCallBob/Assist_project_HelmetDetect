@@ -83,7 +83,7 @@ $app->configure('app');
 
 $app->middleware([
     App\Http\Middleware\AuthMiddleware::class,
-    // App\Http\Middleware\CheckPrevilege::class
+    App\Http\Middleware\CorsMiddleware::class
 ]);
 
 
