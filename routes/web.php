@@ -26,9 +26,12 @@ $router->post('/login', 'AuthController@login');
 $router->post('/register', 'User@register');
 
 // 使用者個資變更
-$router->put('/updateUser', 'User@updateUser');
+$router->post('/updateUser', 'User@updateUser');
+$router->get('/user/info','User@getInfo');
+
 
 // 忘記密碼處理
+
 // 發送驗證碼
 $router->post('/private/forgetPasswd', 'AuthController@sendResetCode');
 // 確認驗證碼儲存新密碼
@@ -48,4 +51,6 @@ $router->get('/picture/user_id/{id}/','PictureController@user_id');
 
 
 // 照片路徑
-$router->get('/picture/show/', 'PictureController@showPic');
+// ? -> file name
+// storage/user_pic/?
+// storage/models_results/?
