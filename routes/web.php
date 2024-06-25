@@ -5,47 +5,47 @@ use App\Http\Controllers\ImageController;
 
 /** @var \Laravel\Lumen\Routing\Router $router */
 
+$router -> get('/',function(){
+    return "hello";
+});
+
+
+
+
 // $router->group(['middleware' => ['auth', 'checkPrivilege']], function () use ($router) {
+
+// JWTtoken驗證 -> 取得ID
 $router->get("/api/token/verify/",'AuthController@checkToken');
-// });
-$router->post('/upload-image','User@uploadImage');
-$router->put('/updateUser', 'User@updateUser');
-$router->get('/getRoles','User@getRoles');
 
 
+// 使用者相關
+
+// 登入
 $router->post('/login', 'AuthController@login');
+// 註冊
 $router->post('/register', 'User@register');
 
-$router->post('/readimg','User@readimg');
+// 使用者個資變更
+$router->put('/updateUser', 'User@updateUser');
 
-// forget password
-$router->post('/send-reset-code', 'AuthController@sendResetCode');
-$router->post('/reset-password', 'AuthController@resetPassword');
+// 忘記密碼處理
+// 發送驗證碼
+$router->post('/private/forgetPasswd', 'AuthController@sendResetCode');
+// 確認驗證碼儲存新密碼
+$router->post('/private/reset-password', 'AuthController@resetPassword');
 
 
 
-$router->group(['prefix' => 'api'], function () use ($router) {
-    $router->get('users', 'UserController@index');
-    $router->post('users', 'UserController@store');
-    $router->get('users/{id}', 'UserController@show');
-    $router->put('users/{id}', 'UserController@update');
-    $router->delete('users/{id}', 'UserController@destroy');
+// 影像辨識相關
 
-    $router->get('pictures', 'PictureController@index');
-    $router->post('pictures', 'PictureController@store');
-    $router->get('pictures/{id}', 'PictureController@show');
-    $router->put('pictures/{id}', 'PictureController@update');
-    $router->delete('pictures/{id}', 'PictureController@destroy');
+// 上傳照片影像辨識
+$router->post('/picture/upload','PictureController@upload');
 
-    $router->get('results', 'ResultController@index');
-    $router->post('results', 'ResultController@store');
-    $router->get('results/{id}', 'ResultController@show');
-    $router->put('results/{id}', 'ResultController@update');
-    $router->delete('results/{id}', 'ResultController@destroy');
+// 使用者查看上傳的所有照片
+$router->get('/picture/user_all','PictureController@user_all');
+// 使用者查看單一照片(id)
+$router->get('/picture/user_id/{id}/','PictureController@user_id');
 
-    $router->get('comments', 'CommentController@index');
-    $router->post('comments', 'CommentController@store');
-    $router->get('comments/{id}', 'CommentController@show');
-    $router->put('comments/{id}', 'CommentController@update');
-    $router->delete('comments/{id}', 'CommentController@destroy');
-});
+
+// 照片路徑
+$router->get('/picture/show/', 'PictureController@showPic');

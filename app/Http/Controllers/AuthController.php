@@ -21,10 +21,6 @@ class AuthController extends Controller
     public function login(Request $request)
     {
 
-        header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-        header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token, Authorization');
-
         $credentials = $request->only("account", "password");
         // search user exist
         $ob = User::where('account', $request->input("account"))
@@ -76,8 +72,8 @@ class AuthController extends Controller
 
         return response()->json(['message' => '郵件不存在', 'status' => 400]);
     }
-    
-    
+
+
     // 以token取得user , 將資料表的password改為新密碼, 並清空reset_code
     public function resetPassword(Request $request)
     {

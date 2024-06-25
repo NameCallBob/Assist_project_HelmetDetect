@@ -1,10 +1,12 @@
 <?php
 
-require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
-(new Laravel\Lumen\Bootstrap\LoadEnvironmentVariables(
-    dirname(__DIR__)
-))->bootstrap();
+(
+    new Laravel\Lumen\Bootstrap\LoadEnvironmentVariables(
+        dirname(__DIR__)
+    )
+)->bootstrap();
 
 date_default_timezone_set(env('APP_TIMEZONE', 'UTC'));
 
@@ -27,7 +29,7 @@ $app = new Laravel\Lumen\Application(
 $app->configure('jwt');
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->configure('auth');
-
+$app->configure("filesystems");
 
 
 
@@ -69,6 +71,8 @@ $app->singleton(
 
 $app->configure('app');
 
+$app->register(Illuminate\Filesystem\FilesystemServiceProvider::class);
+$app->configure('filesystems');
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
@@ -79,14 +83,16 @@ $app->configure('app');
 | route or middleware that'll be assigned to some specific routes.
 |
 */
-
+// $app->register('Nord\Lumen\Cors\CorsServiceProvider');
 
 $app->middleware([
+    // App\Http\Middleware\CorsMiddleware::class,
     App\Http\Middleware\AuthMiddleware::class,
-    App\Http\Middleware\CorsMiddleware::class
+
 ]);
-
-
+$app->routeMiddleware([
+    // 'cors' => App\Http\Middleware\CorsMiddleware::class,
+]);
 
 
 
@@ -126,7 +132,7 @@ $app->middleware([
 $app->router->group([
     'namespace' => 'App\Http\Controllers',
 ], function ($router) {
-    require __DIR__.'/../routes/web.php';
+    require __DIR__ . '/../routes/web.php';
 });
 
 
