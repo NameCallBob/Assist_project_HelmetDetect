@@ -31,23 +31,46 @@ $router->get('/user/info','User@getInfo');
 
 
 // 忘記密碼處理
-
 // 發送驗證碼
 $router->post('/private/forgetPasswd', 'AuthController@sendResetCode');
 // 確認驗證碼儲存新密碼
 $router->post('/private/reset-password', 'AuthController@resetPassword');
 
 
+// 權限判斷
+
 
 // 影像辨識相關
 
-// 上傳照片影像辨識
-$router->post('/picture/upload','PictureController@upload');
+$router->post('/picture/upload', [
+    'as' => 'picture.upload',
+    'uses' => 'PictureController@upload',
+    'middleware' => 'check.permission:picture.upload',
+]);
 
-// 使用者查看上傳的所有照片
-$router->get('/picture/user_all','PictureController@user_all');
-// 使用者查看單一照片(id)
-$router->get('/picture/user_id/{id}/','PictureController@user_id');
+$router->get('/picture/user_all', [
+    'as' => 'picture.user_all',
+    'uses' => 'PictureController@user_all',
+    'middleware' => 'check.permission:picture.user_all',
+]);
+
+$router->get('/picture/user_id/{id}/', [
+    'as' => 'picture.user_id',
+    'uses' => 'PictureController@user_id',
+    'middleware' => 'check.permission:picture.user_id',
+]);
+
+$router->post('/picture/delete/', [
+    'as' => 'picture.delete',
+    'uses' => 'PictureController@destroy',
+    'middleware' => 'check.permission:picture.delete',
+]);
+
+$router->get('/picture/manage/all/', [
+    'as' => 'picture.manage.all',
+    'uses' => 'PictureController@index',
+    'middleware' => 'check.permission:picture.manage.all',
+]);
 
 
 // 照片路徑

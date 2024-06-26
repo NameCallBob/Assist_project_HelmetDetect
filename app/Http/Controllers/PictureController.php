@@ -16,32 +16,32 @@ class PictureController extends Controller
 {
     public function index()
     {
-        return Picture::all();
-    }
-
-    public function store(Request $request)
-    {
-        return Picture::create($request->all());
-    }
-
-    public function show($id)
-    {
-        return Picture::findOrFail($id);
-    }
-
-    public function update(Request $request, $id)
-    {
-        $picture = Picture::findOrFail($id);
-        $picture->update($request->all());
-        return $picture;
+        return Picture::with('results')->get();
     }
 
     public function destroy(Request $request)
     {
-        $id = $request->input('id');
-        $picture = Picture::findOrFail($id);
-        $picture->delete();
-        return 204;
+        $id = AuthMiddleware::getUserId($request);
+        if (!$id){
+            return response() -> json(['err' => 'user not found'] , 404);
+        }
+
+        $pic_id = $request->input('id');
+
+        try{
+            $picture = Picture::where('user_id',$id)
+            ->where('id',$pic_id)
+            ->get()
+            ->first();
+            $picture->delete();
+
+            return response() -> json(['msg' => 'ok'] , 200);
+
+        }catch(Exception $e){
+
+            return response() -> json(['err' => 'pic not found'] , 404);
+
+        }
     }
 
     /**
@@ -52,6 +52,9 @@ class PictureController extends Controller
         if ($request->hasFile('photo') && $request->file('photo')->isValid()) {
 
             $file = $request->file('photo');
+            if (!AuthMiddleware::getUserId($request)){
+                return response() -> json(['msg' => 'user not found'],400);
+             }
             $user_id = AuthMiddleware::getUserId($request);
             // 儲存於本地
             $filename = $this->__savePicToLocal($request);
@@ -115,30 +118,35 @@ class PictureController extends Controller
      */
     public function user_all(Request $request)
     {
-        return response()->json(['data' => Storage::files('user_pic')]);
+        $id = AuthMiddleware::getUserId($request);
+        try{
+            return response() -> json(
+                Picture::where('user_id',$id)
+                ->with('results')
+                ->get()
+            );
+        }catch(Exception $e){
+            return response() -> json(['err' => 'not found'],404);
+        }
     }
 
 
     /**
      * 使用者透過ID查詢單一照片
      */
-    public function user_id($id)
+    public function user_id(Request $request,$id)
     {
-
+        $uid = AuthMiddleware::getUserId($request);
+        try{
+            return response() -> json(
+                Picture::where('user_id',$uid)
+                ->where('id',$id)
+                ->with('results')
+                ->get()
+            );
+        }catch(Exception $e){
+            return response() -> json(['err' => 'not found'],404);
+        }
     }
-
-    /**
-     * 展示照片
-     */
-    public function showPic()
-    {
-        // 檢查檔案是否存在
-        // 定義圖片存放的目錄
-        $imageUrl = Storage::disk('public')->url("user_pic/123.jpg");
-        return response()->json([
-            'message' => $imageUrl
-        ]);
-    }
-
 
 }

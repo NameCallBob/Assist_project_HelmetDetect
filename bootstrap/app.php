@@ -91,7 +91,7 @@ $app->middleware([
 
 ]);
 $app->routeMiddleware([
-    // 'cors' => App\Http\Middleware\CorsMiddleware::class,
+    'check.permission' => App\Http\Middleware\AuthMiddleware::class,
 ]);
 
 
